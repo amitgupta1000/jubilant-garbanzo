@@ -1,7 +1,3 @@
-os
-shutil
-csv
-pandas
-google-cloud-storage  # Installs the google.cloud library
+google-cloud-storage
 streamlit
 google-auth
