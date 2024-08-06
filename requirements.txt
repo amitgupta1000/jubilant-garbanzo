@@ -1,4 +1,7 @@
-google-cloud-storage
-streamlit
-google-oauth2-service_account
+os
+shutil
+csv
 pandas
+google-cloud-storage  # Installs the google.cloud library
+streamlit
+google-auth
