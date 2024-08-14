@@ -179,8 +179,6 @@ def main():
             start_folder = os.path.join('temp', f'{current_time}')  # Change this to your desired local path
             os.makedirs(start_folder, exist_ok=True)
             
-            local_result_folder = os.path.join(start_folder, "result")
-
             for uploaded_file in uploaded_files:
                 # Save the uploaded file to the start folder
                 with open(os.path.join(start_folder, uploaded_file.name), "wb") as f:
@@ -204,12 +202,14 @@ def main():
                 concatenate (local_result_folder)
                 st.success(f"Files concatenated to {local_result_folder}.")
 
+                local_result_folder = os.path.join(start_folder, "result")
+                download_files_from_gcs(result_bucket, local_result_folder, uploaded_prefixes)
+
                 # Provide download links for processed files
-                for prefix in uploaded_prefixes:
-                    result_file_path = os.path.join(local_result_folder, f'{prefix}.txt')  # Adjust based on your output format
-                    if os.path.exists(result_file_path):
-                        with open(result_file_path, 'rb') as f:
-                            st.download_button(label=f"Download {prefix} Result", data=f, file_name=f'{prefix}_result.txt')
+                for filename in os.listdir(local_result_folder):
+                    file_path = os.path.join(local_result_folder, filename)
+                    with open(file_path, 'rb') as f:
+                        st.download_button(label=f"Download {filename}", data=f, file_name=filename)
 
             except Exception as e:
                 st.error(f"An error occurred: {e}")
