@@ -176,8 +176,9 @@ def main():
         if uploaded_files and trigger_bucket and result_bucket:
             # Create a local folder to store uploaded files
             current_time = datetime.now().strftime("%d%m_%H%M")
-            start_folder = os.path.join(r'C:\temp', f'{current_time}')  # Change this to your desired local path
+            start_folder = os.path.join('temp', f'{current_time}')  # Change this to your desired local path
             os.makedirs(start_folder, exist_ok=True)
+            
             local_result_folder = os.path.join(start_folder, "result")
 
             for uploaded_file in uploaded_files:
@@ -198,12 +199,17 @@ def main():
 
                 # Step 5: Download files from GCS to local result folder based on prefixes
                 download_files_from_gcs(result_bucket, local_result_folder, uploaded_prefixes)
-
                 st.success(f"Files processed and downloaded to {local_result_folder}.")
 
                 concatenate (local_result_folder)
-
                 st.success(f"Files concatenated to {local_result_folder}.")
+
+                # Provide download links for processed files
+                for prefix in uploaded_prefixes:
+                    result_file_path = os.path.join(local_result_folder, f'{prefix}.txt')  # Adjust based on your output format
+                    if os.path.exists(result_file_path):
+                        with open(result_file_path, 'rb') as f:
+                            st.download_button(label=f"Download {prefix} Result", data=f, file_name=f'{prefix}_result.txt')
 
             except Exception as e:
                 st.error(f"An error occurred: {e}")
