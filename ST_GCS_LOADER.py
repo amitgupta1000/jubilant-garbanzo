@@ -7,8 +7,9 @@ from google.oauth2 import service_account
 import pandas as pd
 
 # Load the service account key from a secure location
-credentials = service_account.Credentials.from_service_account_file(
-    'C:/applied-arcanum-431302-j8-767eea8fecd8.json')
+# Load the service account key from a secure location
+credentials_info = st.secrets["GCP_credentials"]
+credentials = service_account.Credentials.from_service_account_info(credentials_info)
 
 storage_client = storage.Client(credentials=credentials)
 
