@@ -169,13 +169,17 @@ def main():
     # Step 1: User uploads files
     uploaded_files = st.file_uploader("Choose files to upload", accept_multiple_files=True)
 
+    # Initialize local_result_folder variable
+    local_result_folder = None
+
     if st.button("Upload and Process"):
         if uploaded_files and trigger_bucket and result_bucket:
             # Create a local folder to store uploaded files
             current_time = datetime.now().strftime("%d%m_%H%M")
-            start_folder = os.path.join('temp', f'{current_time}')  # Change this to your desired local path
+            start_folder = os.path.join(r'temp', f'{current_time}')  # Change this to your desired local path
             os.makedirs(start_folder, exist_ok=True)
-            
+            local_result_folder = os.path.join(start_folder, "result")
+
             for uploaded_file in uploaded_files:
                 # Save the uploaded file to the start folder
                 with open(os.path.join(start_folder, uploaded_file.name), "wb") as f:
@@ -193,12 +197,15 @@ def main():
                 time.sleep(30)
 
                 # Step 5: Download files from GCS to local result folder based on prefixes
-                local_result_folder = os.path.join(start_folder, "result")
                 download_files_from_gcs(result_bucket, local_result_folder, uploaded_prefixes)
+
                 st.success(f"Files processed and downloaded to {local_result_folder}.")
 
-                concatenate (local_result_folder)
-                st.success(f"Files concatenated to {local_result_folder}.")
+                # Download files from GCS to local result folder based on prefixes
+                local_result_folder = os.path.join(start_folder, "result")
+                os.makedirs(local_result_folder, exist_ok=True)
+
+                download_files_from_gcs(result_bucket, local_result_folder, uploaded_prefixes)
 
                 # Provide download links for processed files
                 for filename in os.listdir(local_result_folder):
@@ -206,14 +213,14 @@ def main():
                     with open(file_path, 'rb') as f:
                         st.download_button(label=f"Download {filename}", data=f, file_name=filename)
 
+                concatenate (local_result_folder)
+
+                st.success(f"Files concatenated to {local_result_folder}.")
+
             except Exception as e:
                 st.error(f"An error occurred: {e}")
         else:
             st.warning("Please select an option and upload files.")
 
-
 if __name__ == '__main__':
     main()
-
-
-
