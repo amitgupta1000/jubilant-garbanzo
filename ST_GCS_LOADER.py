@@ -169,9 +169,6 @@ def main():
     # Step 1: User uploads files
     uploaded_files = st.file_uploader("Choose files to upload", accept_multiple_files=True)
 
-    # Initialize local_result_folder variable
-    local_result_folder = None
-
     if st.button("Upload and Process"):
         if uploaded_files and trigger_bucket and result_bucket:
             # Create a local folder to store uploaded files
@@ -196,14 +193,12 @@ def main():
                 time.sleep(30)
 
                 # Step 5: Download files from GCS to local result folder based on prefixes
+                local_result_folder = os.path.join(start_folder, "result")
                 download_files_from_gcs(result_bucket, local_result_folder, uploaded_prefixes)
                 st.success(f"Files processed and downloaded to {local_result_folder}.")
 
                 concatenate (local_result_folder)
                 st.success(f"Files concatenated to {local_result_folder}.")
-
-                local_result_folder = os.path.join(start_folder, "result")
-                download_files_from_gcs(result_bucket, local_result_folder, uploaded_prefixes)
 
                 # Provide download links for processed files
                 for filename in os.listdir(local_result_folder):
