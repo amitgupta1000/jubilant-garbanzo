@@ -184,7 +184,7 @@ def main():
                 # Save the uploaded file to the start folder
                 with open(os.path.join(start_folder, uploaded_file.name), "wb") as f:
                     f.write(uploaded_file.getbuffer())
-                st.success(f"Uploaded {uploaded_file.name} to {start_folder}")
+                st.success(f"Uploaded {uploaded_file.name}")
 
             # Step 2: Create a result folder with the current date and time
           
@@ -199,7 +199,7 @@ def main():
                 # Step 5: Download files from GCS to local result folder based on prefixes
                 download_files_from_gcs(result_bucket, local_result_folder, uploaded_prefixes)
 
-                st.success(f"Files processed and downloaded to {local_result_folder}.")
+                st.success(f"Files processed.")
 
                 # Download files from GCS to local result folder based on prefixes
                 local_result_folder = os.path.join(start_folder, "result")
@@ -214,8 +214,8 @@ def main():
                         st.download_button(label=f"Download {filename}", data=f, file_name=filename)
 
                 concatenate (local_result_folder)
-
-                st.success(f"Files concatenated to {local_result_folder}.")
+                #can add a download button to download the concatenated files later
+                st.success(f"Files concatenated.")
 
             except Exception as e:
                 st.error(f"An error occurred: {e}")
